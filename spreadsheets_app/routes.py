@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import Table, Column, Integer, String, MetaData
+from sqlalchemy import Table, Column, Integer, MetaData
 from spreadsheets_app import DATABASE, APP
 from spreadsheets_app.models import SheetsMetaData
 
@@ -15,28 +15,35 @@ TYPE_MAPPING = {
 METADATA = MetaData()
 
 
-def create_sheet():
+def create_sheet(schema):
     schema = request.get_json()
 
     if 'columns' not in schema or not isinstance(schema['columns'], list):
         return 'Invalid schema', 400
     
     schema_columns = schema['columns']
-    sheet_id = save_metadata(schema_columns)
     
+    # first make sure columns propertly structured
     try:
-        # dynamically create the table
         columns = [Column('id', Integer, primary_key=True, autoincrement=True)]
         for col in schema_columns:
             columns.append(Column(col["name"], get_column_type(col["type"])))
+    
+    except KeyError as err:
+        return f"Error creating {schema}; Column should have `name` and `type`.", 400
         
-        table_name = f"sheet_{sheet_id}"
+    except (SQLAlchemyError, RuntimeError) as err:
+        return f'Error creating {schema}; {err}', 400
+    
+    sheet_id = save_metadata(schema_columns)
+    # dynamically create the table
+    table_name = f"sheet_{sheet_id}"
+    
+    try:
         table = Table(table_name, METADATA, *columns)
         METADATA.create_all(DATABASE.engine, tables=[table])
-    
     except SQLAlchemyError as err:
-        return f'error creating {schema}; {err}', 400
-    
+        return f'error accur after adding table to the metadata for {schema}; sheet was not created; {err}', 400
     
     return jsonify({'sheetId': sheet_id}), 201
 
@@ -50,9 +57,10 @@ def get_column_type(column_type):
     try:
         return TYPE_MAPPING[column_type]
     except KeyError as err:
-        raise RuntimeError(f"column type is unrecognized; {err}")
+        raise RuntimeError(f"column type is unrecognized: {err}")
         
 
 @APP.route('/sheet', methods=['POST'])
 def create_sheet_endpoint():
-    return create_sheet()
+    schema = request.get_json()
+    return create_sheet(schema)

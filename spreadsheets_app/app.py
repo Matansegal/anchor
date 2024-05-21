@@ -1,4 +1,4 @@
-from . import APP, DATABASE
+from spreadsheets_app import APP, DATABASE
 # import those to create the routes and the models
 from spreadsheets_app import routes, models
 
