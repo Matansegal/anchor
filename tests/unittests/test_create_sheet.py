@@ -1,6 +1,6 @@
 import unittest
 from spreadsheets_app import DATABASE, APP
-from spreadsheets_app.routes import create_sheet
+from spreadsheets_app.utils.create_sheet import create_sheet
 
 
 class TestCreateSheet(unittest.TestCase):
