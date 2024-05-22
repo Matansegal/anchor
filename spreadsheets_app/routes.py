@@ -15,7 +15,7 @@ TYPE_MAPPING = {
 METADATA = MetaData()
 
 
-def create_sheet(schema):
+def create_sheet():
     schema = request.get_json()
 
     if 'columns' not in schema or not isinstance(schema['columns'], list):
@@ -62,5 +62,4 @@ def get_column_type(column_type):
 
 @APP.route('/sheet', methods=['POST'])
 def create_sheet_endpoint():
-    schema = request.get_json()
-    return create_sheet(schema)
+    return create_sheet()
