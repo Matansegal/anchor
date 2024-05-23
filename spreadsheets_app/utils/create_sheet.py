@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import Table, Column, Integer, MetaData
-from spreadsheets_app import DATABASE, APP
+from sqlalchemy import Table, Column, Integer
+from spreadsheets_app import DATABASE, METADATA
 from spreadsheets_app.models import SheetsMetaData
 
 
@@ -11,8 +11,6 @@ TYPE_MAPPING = {
         'double': DATABASE.Float,
         'string': DATABASE.String
     }
-
-METADATA = MetaData()
 
 
 def create_sheet():
@@ -25,9 +23,9 @@ def create_sheet():
     
     # first make sure columns propertly structured
     try:
-        columns = [Column('id', Integer, primary_key=True, autoincrement=True)]
+        columns = [Column('row_number', Integer, primary_key=True)]
         for col in schema_columns:
-            columns.append(Column(col["name"], get_column_type(col["type"])))
+            columns.append(Column(col["name"], get_column_type(col["type"]), nullable=True))
     
     except KeyError as err:
         return f"Error creating {schema}; Column should have `name` and `type`.", 400
