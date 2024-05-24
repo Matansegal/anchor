@@ -46,12 +46,11 @@ def create_sheet():
 
     return jsonify({"sheetId": sheet_id}), 201
 
+
 def set_columns_list(schema_columns):
     columns = [Column("row_number", Integer, primary_key=True)]
     for col in schema_columns:
-        columns.append(
-            Column(col["name"], get_column_type(col["type"]), nullable=True)
-        )
+        columns.append(Column(col["name"], get_column_type(col["type"]), nullable=True))
     return columns
 
 

@@ -33,17 +33,15 @@ def set_cell():
         if existing_row:
             # if row exists, update it
             row = {column_name: value}
-            statement = (
-                update(table).values(row).where(row_number_exist_condition)
-            )
+            statement = update(table).values(row).where(row_number_exist_condition)
 
         else:
             # insert new row
             row = {"row_number": row_number, column_name: value}
             statement = insert(table).values(row)
-        
+
         try:
-            strict_types(row,table)
+            strict_types(row, table)
         except ValueError as err:
             return f"{err}", 400
 
@@ -63,8 +61,10 @@ def set_cell():
 # I need it since I dont have sqlite>=3.37 where they have the STRICT operator,
 # and it looks like sqlalchemy dont support it yet.
 # more info https://github.com/sqlalchemy/sqlalchemy/issues/7398
-def strict_types(row,table):
+def strict_types(row, table):
     for col_name, value in row.items():
         col_type = table.c[col_name].type.python_type
-        if not isinstance(value,col_type):
-             raise ValueError(f"Invalid value '{value}' for column '{col_name}'. Must be of type {col_type}.")
+        if not isinstance(value, col_type):
+            raise ValueError(
+                f"Invalid value '{value}' for column '{col_name}'. Must be of type {col_type}."
+            )

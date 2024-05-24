@@ -11,7 +11,7 @@ class TestCreateSheet(unittest.TestCase):
             DATABASE.create_all()
 
     def tearDown(self):
-       with APP.app_context():
+        with APP.app_context():
             DATABASE.session.remove()
             # drop table which created with a model
             DATABASE.drop_all()

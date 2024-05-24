@@ -37,13 +37,15 @@ class TestSetCell(unittest.TestCase):
 
     def test_set_cell_valid(self):
         # Mock set_cell schema
-        with APP.test_request_context(json={
-            "sheet_id": self.sheet_id,
-            "column_name": "col2",
-            "row_number": 1,
-            "value": 10
-        }):
-            
+        with APP.test_request_context(
+            json={
+                "sheet_id": self.sheet_id,
+                "column_name": "col2",
+                "row_number": 1,
+                "value": 10,
+            }
+        ):
+
             response, status_code = set_cell()
             # should get empty response
             self.assertEqual(response, "")
@@ -55,57 +57,62 @@ class TestSetCell(unittest.TestCase):
             table = METADATA.tables[table_name]
             result = DATABASE.session.execute(select(table)).fetchall()
             self.assertEqual(len(result), 1)
-            self.assertEqual(result[0], (1,None,10))
-            
+            self.assertEqual(result[0], (1, None, 10))
+
         # insert another cell
-        with APP.test_request_context(json={
-            "sheet_id": self.sheet_id,
-            "column_name": "col1",
-            "row_number": 1,
-            "value": "matan"
-        }):
-            
+        with APP.test_request_context(
+            json={
+                "sheet_id": self.sheet_id,
+                "column_name": "col1",
+                "row_number": 1,
+                "value": "matan",
+            }
+        ):
+
             response, status_code = set_cell()
             self.assertEqual(response, "")
             self.assertEqual(status_code, 201)
-        
+
         # check again that the new cell updated
         with APP.app_context():
             result = DATABASE.session.execute(select(table)).fetchall()
             self.assertEqual(len(result), 1)
-            self.assertEqual(result[0], (1,"matan",10))
-            
+            self.assertEqual(result[0], (1, "matan", 10))
 
     def test_set_cell_invalid_type(self):
         # Mock invalid JSON schema for set_cell
-        with APP.test_request_context( json={
-            "sheet_id": self.sheet_id,
-            "column_name": "col2",
-            "row_number": 1,
-            "value": "invalid_value"  # Should be an int
-        }):
+        with APP.test_request_context(
+            json={
+                "sheet_id": self.sheet_id,
+                "column_name": "col2",
+                "row_number": 1,
+                "value": "invalid_value",  # Should be an int
+            }
+        ):
 
             response, status_code = set_cell()
-            
+
             # Assert response and status code
             self.assertEqual(status_code, 400)
             self.assertIn("Invalid value 'invalid_value' for column", response)
-            
-    
+
     def test_set_cell_invalid_sheet_id(self):
         # Mock invalid JSON schema for set_cell
-        with APP.test_request_context( json={
-            "sheet_id": self.sheet_id + 100, 
-            "column_name": "col1",
-            "row_number": 1,
-            "value": "matan"  
-        }):
+        with APP.test_request_context(
+            json={
+                "sheet_id": self.sheet_id + 100,
+                "column_name": "col1",
+                "row_number": 1,
+                "value": "matan",
+            }
+        ):
 
             response, status_code = set_cell()
-            
+
             # Assert response and status code
             self.assertEqual(status_code, 400)
             self.assertIn("could not find sheet number", response)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
