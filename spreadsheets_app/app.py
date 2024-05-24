@@ -8,7 +8,6 @@ def main():
     APP.config.from_object('config.DevConfig')
     DATABASE.init_app(APP)
     with APP.app_context():
-        DATABASE.drop_all()
         DATABASE.create_all()
         
     APP.run(host="0.0.0.0", port=int("5000"), debug=True)

@@ -42,7 +42,6 @@ def set_cell():
             row = {"row_number": row_number, column_name: value}
             statement = insert(table).values(row)
         
-        breakpoint()
         try:
             strict_types(row,table)
         except ValueError as err:

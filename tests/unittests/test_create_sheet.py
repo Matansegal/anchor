@@ -1,21 +1,23 @@
 import unittest
-from spreadsheets_app import DATABASE, APP
+from spreadsheets_app import METADATA
 from spreadsheets_app.utils.create_sheet import create_sheet
+from tests import APP, DATABASE
 
 
 class TestCreateSheet(unittest.TestCase):
     def setUp(self):
-        APP.testing = True
-        APP.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
-
         # Create all tables in the test database
         with APP.app_context():
             DATABASE.create_all()
 
     def tearDown(self):
         # Drop all tables in the test database
+        # since I created tables manually drop_all doesnt work
         with APP.app_context():
             DATABASE.session.remove()
+            # drop all table which createad manualy
+            METADATA.drop_all(DATABASE.engine)
+            # drop table which created with a model
             DATABASE.drop_all()
 
     def test_create_sheet_success(self):
