@@ -23,11 +23,7 @@ def create_sheet():
 
     # first make sure columns propertly structured
     try:
-        columns = [Column("row_number", Integer, primary_key=True)]
-        for col in schema_columns:
-            columns.append(
-                Column(col["name"], get_column_type(col["type"]), nullable=True)
-            )
+        columns = set_columns_list(schema_columns)
 
     except KeyError as err:
         return f"Error creating {schema}; Column should have `name` and `type`.", 400
@@ -49,6 +45,14 @@ def create_sheet():
         )
 
     return jsonify({"sheetId": sheet_id}), 201
+
+def set_columns_list(schema_columns):
+    columns = [Column("row_number", Integer, primary_key=True)]
+    for col in schema_columns:
+        columns.append(
+            Column(col["name"], get_column_type(col["type"]), nullable=True)
+        )
+    return columns
 
 
 def save_metadata(columns):

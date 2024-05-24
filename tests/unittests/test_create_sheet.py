@@ -11,14 +11,13 @@ class TestCreateSheet(unittest.TestCase):
             DATABASE.create_all()
 
     def tearDown(self):
-        # Drop all tables in the test database
-        # since I created tables manually drop_all doesnt work
-        with APP.app_context():
+       with APP.app_context():
             DATABASE.session.remove()
-            # drop all table which createad manualy
-            METADATA.drop_all(DATABASE.engine)
             # drop table which created with a model
             DATABASE.drop_all()
+            # drop all table which createad manualy
+            METADATA.drop_all(DATABASE.engine)
+            METADATA.clear()
 
     def test_create_sheet_success(self):
         with APP.test_request_context(

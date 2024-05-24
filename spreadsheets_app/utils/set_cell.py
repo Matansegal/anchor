@@ -45,7 +45,7 @@ def set_cell():
         try:
             strict_types(row,table)
         except ValueError as err:
-            return err, 400
+            return f"{err}", 400
 
         try:
             conn.execute(statement)
