@@ -1,6 +1,6 @@
 import unittest
 from spreadsheets_app import METADATA
-from spreadsheets_app.utils.create_sheet import create_sheet
+from spreadsheets_app.db_accessors.create_sheet import create_sheet
 from tests import APP, DATABASE
 
 

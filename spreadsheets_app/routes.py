@@ -1,7 +1,7 @@
 from spreadsheets_app import APP
-from spreadsheets_app.utils.create_sheet import create_sheet
-from spreadsheets_app.utils.set_cell import set_cell
-from spreadsheets_app.utils.get_sheet import get_sheet_by_id
+from spreadsheets_app.db_accessors.create_sheet import create_sheet
+from spreadsheets_app.db_accessors.set_cell import set_cell
+from spreadsheets_app.db_accessors.get_sheet import get_sheet_by_id
 
 
 @APP.route("/sheet/createSheet", methods=["POST"])
