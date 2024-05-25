@@ -32,14 +32,10 @@ def lookup(
     value = get_lookup_value(table, source_row_number, source_column)
     
     breakpoint()
-    # add to dependency
-    try:
-        add_dependency(
-            sheet_id, dest_row_number, dest_col, source_row_number, source_column
-        )
-    except IntegrityError as err:
-        raise ValueError("Dependency already exist")
-    
+
+    add_dependency(
+        sheet_id, dest_row_number, dest_col, source_row_number, source_column
+    )
 
     # TODO change all dependents if source is changed
     # do that recursively for dependants of depandants
@@ -177,5 +173,20 @@ def add_reverse_dependency(sheet_id: int, dest_row: int, dest_col: str, source_r
     DATABASE.session.commit()
 
 
-def check_if_in_dependency():
-    pass
+def backtracking(sheet_id: int, dest_row: int, dest_col: str):
+    """
+    When we udpate a value of a cell which multiple cell depends on we would go over all
+    the dependents and their dependents to update them
+    """
+    dependency = get_dependency_row(sheet_id, dest_row, dest_col)
+    if dependency:
+        reverse_dependent_row= get_reverse_dependency_row(sheet_id, dest_row, dest_col, dependency.source_row, dependency.source_col)
+        # TODO for loop over all dependents and call again back tracking
+        if reverse_dependent_row:
+            # json in the database save all as string
+            dest_row = str(dest_row)
+            # update the dependent json
+            for curr_dest_row in reverse_dependent_row.dependents:
+                pass
+                
+        # TODO udpate their value in the table
