@@ -1,7 +1,10 @@
 from flask import request, jsonify
 from sqlalchemy.exc import SQLAlchemyError
-from spreadsheets_app.db_accessors.sheets import save_metadata, create_table, set_columns_list
-
+from spreadsheets_app.db_accessors.sheets import (
+    save_metadata,
+    create_table,
+    set_columns_list,
+)
 
 
 def create_sheet():
@@ -24,17 +27,11 @@ def create_sheet():
 
     sheet_id = save_metadata(schema_columns)
     try:
-        create_table(sheet_id,columns)
+        create_table(sheet_id, columns)
     except SQLAlchemyError as err:
         return (
             f"error accur after adding table to the metadata for {schema}; sheet was not created; {err}",
             400,
         )
-    
+
     return jsonify({"sheetId": sheet_id}), 201
-
-
-
-
-
-

@@ -33,17 +33,23 @@ def set_cell():
             )
         except ValueError as err:
             return f"{err}", 400
-    
+
     else:
         # check for remove dependency
         remove_dependency(sheet_id, row_number, column_name)
-        
+
     try:
         update_cell(table, row_number, column_name, value)
         # backtrack for update all dependents
-        backtracking(sheet=table,sheet_id=sheet_id,source_row=row_number,source_col=column_name,value=value)
-        
-    except (ValueError,SQLAlchemyError) as err:
+        backtracking(
+            sheet=table,
+            sheet_id=sheet_id,
+            source_row=row_number,
+            source_col=column_name,
+            value=value,
+        )
+
+    except (ValueError, SQLAlchemyError) as err:
         return f"{err}", 400
 
     return "", 201

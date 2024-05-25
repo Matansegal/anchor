@@ -33,22 +33,23 @@ def lookup(
 
     # make sure those are the same column type
     if table.c[source_col].type != table.c[dest_col].type:
-        raise ValueError(f"dest column type {table.c[dest_col].type} not the same as source column type {table.c[source_col].type}")
-    
+        raise ValueError(
+            f"dest column type {table.c[dest_col].type} not the same as source column type {table.c[source_col].type}"
+        )
+
     if cyclic_path := CyclicDependents(sheet_id, dest_row_number, dest_col).is_cyclic(
         source_row, source_col
     ):
         cyclic_path_str = " -> ".join(cyclic_path)
         origin_cell = f"({dest_row_number},{dest_col})(given) -> "
-        raise ValueError(f"the given LOOKUP call creates a cyclic path\n{origin_cell}{cyclic_path_str}")
-    
+        raise ValueError(
+            f"the given LOOKUP call creates a cyclic path\n{origin_cell}{cyclic_path_str}"
+        )
+
     # get the value from the source
     value = get_lookup_value(table, source_row, source_col)
 
-
-    add_dependency(
-        sheet_id, dest_row_number, dest_col, source_row, source_col
-    )
+    add_dependency(sheet_id, dest_row_number, dest_col, source_row, source_col)
 
     return value
 
@@ -226,18 +227,17 @@ class CyclicDependents:
         self.cyclic_path = []
 
     def is_cyclic(self, source_row, source_col):
-        
+
         self.cyclic_path.append(f"({source_row}, {source_col})")
-        
+
         if self.new_dest == (source_row, source_col):
             # find cyclic, return the path
             return self.cyclic_path
-        
+
         # get source depenency
-        source_dependancy = get_dependency(
-            self.sheet_id, source_row, source_col
-        )
-        
-        if source_dependancy:            
-            return self.is_cyclic(source_dependancy.source_row, source_dependancy.source_col)
-    
+        source_dependancy = get_dependency(self.sheet_id, source_row, source_col)
+
+        if source_dependancy:
+            return self.is_cyclic(
+                source_dependancy.source_row, source_dependancy.source_col
+            )

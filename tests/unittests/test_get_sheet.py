@@ -77,13 +77,13 @@ class TestGetSheet(unittest.TestCase):
             self.assertEqual(sheet, expected_result)
 
     def test_get_invalid_sheet_id(self):
-        
-            with APP.app_context():
-                response, status_code = get_sheet_by_id(self.sheet_id + 100)
 
-                # Assert response and status code
-                self.assertEqual(status_code, 400)
-                self.assertIn("could not find sheet number", response)
+        with APP.app_context():
+            response, status_code = get_sheet_by_id(self.sheet_id + 100)
+
+            # Assert response and status code
+            self.assertEqual(status_code, 400)
+            self.assertIn("could not find sheet number", response)
 
 
 if __name__ == "__main__":

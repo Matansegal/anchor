@@ -9,6 +9,7 @@ class SheetsMetaData(DATABASE.Model):
     Technically, we dont use the schema from herer but it is nice to have.
     we could also store the table name, but I think it is simple to keep as sheet_{id}
     """
+
     id = Column(Integer, primary_key=True)
     schema = Column(JSON)
 
@@ -22,6 +23,7 @@ class Dependancy(DATABASE.Model):
     it will be unique by sheet_id, destination row and col, so each cell will be
     depands on max of one other cell.
     """
+
     sheet_id = Column(Integer, primary_key=True)
     dest_row = Column(Integer, primary_key=True)
     dest_col = Column(String, primary_key=True)
@@ -41,20 +43,24 @@ class Dependancy(DATABASE.Model):
         self.dest_col = dest_col
         self.source_row = source_row
         self.source_col = source_col
-        
+
+
 class ReverseDependent(DATABASE.Model):
     """
     Here we will store cell which other cells depends on.
-    This is usefull for case where we change the value of source cell and 
+    This is usefull for case where we change the value of source cell and
     instead of going over the whole Depandancy table, we can just use one row here.
-    It is important to keep those two synchronized. 
+    It is important to keep those two synchronized.
     """
+
     sheet_id = Column(Integer, primary_key=True)
     source_row = Column(Integer, primary_key=True)
     source_col = Column(String, primary_key=True)
-    dependents = Column(MutableDict.as_mutable(JSON)) # structured as: {row : [cols]}
+    dependents = Column(MutableDict.as_mutable(JSON))  # structured as: {row : [cols]}
 
-    def __init__(self, sheet_id : int, source_row : int, source_col : str, dependents : dict):
+    def __init__(
+        self, sheet_id: int, source_row: int, source_col: str, dependents: dict
+    ):
         self.sheet_id = sheet_id
         self.source_row = source_row
         self.source_col = source_col

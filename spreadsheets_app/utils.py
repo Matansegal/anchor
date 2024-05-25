@@ -4,7 +4,7 @@ from sqlalchemy import Table
 # I need it since I dont have sqlite>=3.37 where they have the STRICT operator,
 # and it looks like sqlalchemy dont support it yet.
 # more info https://github.com/sqlalchemy/sqlalchemy/issues/7398
-def strict_types(row : dict, table : Table):
+def strict_types(row: dict, table: Table):
     for col_name, value in row.items():
         col_type = table.c[col_name].type.python_type
         if not isinstance(value, col_type):
