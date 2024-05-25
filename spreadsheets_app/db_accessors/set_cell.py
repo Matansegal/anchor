@@ -2,7 +2,7 @@ from flask import request
 from sqlalchemy import Table, insert, select, update
 from sqlalchemy.exc import SQLAlchemyError
 from spreadsheets_app import DATABASE, METADATA
-from spreadsheets_app.db_accessors.lookup import lookup
+from spreadsheets_app.db_accessors.lookup import lookup, remove_dependency
 from spreadsheets_app.utils import strict_types
 
 
@@ -26,7 +26,6 @@ def set_cell():
 
     row_number_exist_condition = table.c.row_number == row_number
 
-    # breakpoint()
     # check for look up call:
     if isinstance(value, str) and value.startswith("LOOKUP"):
         try:
@@ -39,6 +38,12 @@ def set_cell():
             )
         except ValueError as err:
             return f"{err}", 400
+    
+    else:
+        # check for remove dependency
+        remove_dependency(sheet_id, row_number, column_name)
+        # TODO back track for update all dependents
+        
 
     with DATABASE.engine.connect() as conn:
         # check if row_numer exsits

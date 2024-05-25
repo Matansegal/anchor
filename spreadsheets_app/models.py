@@ -4,9 +4,9 @@ from spreadsheets_app import DATABASE
 
 class SheetsMetaData(DATABASE.Model):
     """
-    This table is to save the ids of sheet with their schema.
-    Technically, I dont use the schema from herer but it is nice to have.
-    I could also store the table name, but I think it is simple to keep as sheet_{id}
+    This table saves the ids of sheet with their schema.
+    Technically, we dont use the schema from herer but it is nice to have.
+    we could also store the table name, but I think it is simple to keep as sheet_{id}
     """
     id = Column(Integer, primary_key=True)
     schema = Column(JSON)

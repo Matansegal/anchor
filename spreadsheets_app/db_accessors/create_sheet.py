@@ -1,4 +1,5 @@
 from flask import request, jsonify
+from typing import List
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import Table, Column, Integer, Boolean, Float, String
 from spreadsheets_app import DATABASE, METADATA
@@ -47,21 +48,21 @@ def create_sheet():
     return jsonify({"sheetId": sheet_id}), 201
 
 
-def set_columns_list(schema_columns):
+def set_columns_list(schema_columns : List[dict]) -> List[Column]:
     columns = [Column("row_number", Integer, primary_key=True)]
     for col in schema_columns:
         columns.append(Column(col["name"], get_column_type(col["type"]), nullable=True))
     return columns
 
 
-def save_metadata(columns):
+def save_metadata(columns : List[Column]) -> int:
     sheet = SheetsMetaData(columns)
     DATABASE.session.add(sheet)
     DATABASE.session.commit()
     return sheet.id
 
 
-def get_column_type(column_type):
+def get_column_type(column_type : str) :
     try:
         return TYPE_MAPPING[column_type]
     except KeyError as err:
