@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from spreadsheets_app import DATABASE
 from spreadsheets_app.models import Dependancy, ReverseDependent
 from spreadsheets_app.db_accessors.cell import update_cell
+from spreadsheets_app.utils import strict_types
 
 LOOKUP_PATTERN = r"LOOKUP\(([^,]+),\s*([^)]+)\)"
 
@@ -22,45 +23,48 @@ def lookup(
         raise ValueError(
             "string start with 'LOOKUP' but does not match the pattern 'LOOKUP(col,value)'."
         )
-    source_column = match_pattern.group(1).strip()
+    source_col = match_pattern.group(1).strip()
     row_number_str = match_pattern.group(2).strip()
 
     try:
-        source_row_number = int(row_number_str)
+        source_row = int(row_number_str)
     except ValueError:
         raise ValueError("Given row number in LOOKUP(col,row_number) is not an int.")
 
+    # make sure those are the same column type
+    if table.c[source_col].type != table.c[dest_col].type:
+        raise ValueError(f"dest column type {table.c[dest_col].type} not the same as source column type {table.c[source_col].type}")
+    
     if cyclic_path := CyclicDependents(sheet_id, dest_row_number, dest_col).is_cyclic(
-        source_row_number, source_column
+        source_row, source_col
     ):
         cyclic_path_str = " -> ".join(cyclic_path)
         origin_cell = f"({dest_row_number},{dest_col})(given) -> "
         raise ValueError(f"the given LOOKUP call creates a cyclic path\n{origin_cell}{cyclic_path_str}")
-
+    
     # get the value from the source
-    value = get_lookup_value(table, source_row_number, source_column)
+    value = get_lookup_value(table, source_row, source_col)
 
-    # TODO make sure it is same type before insert
 
     add_dependency(
-        sheet_id, dest_row_number, dest_col, source_row_number, source_column
+        sheet_id, dest_row_number, dest_col, source_row, source_col
     )
 
     return value
 
 
-def get_lookup_value(table: Table, source_row_number: int, source_column: str):
+def get_lookup_value(table: Table, source_row: int, source_col: str):
     with DATABASE.engine.connect() as conn:
         # TODO handle if value do not exsits
-        select_statement = select(table.c[source_column]).where(
-            table.c.row_number == source_row_number
+        select_statement = select(table.c[source_col]).where(
+            table.c.row_number == source_row
         )
         result = conn.execute(select_statement)
         [value] = result.fetchone()
         return value
 
 
-def reverse_dependent(sheet_id: int, dest_row: int, dest_col: str) -> Dependancy:
+def get_dependency(sheet_id: int, dest_row: int, dest_col: str) -> Dependancy:
     return (
         DATABASE.session.query(Dependancy)
         .filter(
@@ -76,9 +80,7 @@ def add_dependency(
     sheet_id: int, dest_row: int, dest_col: str, source_row: int, source_col: str
 ):
     # check if exsits
-    dependency = reverse_dependent(sheet_id, dest_row, dest_col)
-
-    # breakpoint()
+    dependency = get_dependency(sheet_id, dest_row, dest_col)
 
     if dependency:
         if dependency.source_row == source_row and dependency.source_col == source_col:
@@ -110,7 +112,7 @@ def add_dependency(
 
 
 def remove_dependency(sheet_id: int, dest_row: int, dest_col: str):
-    dependency = reverse_dependent(sheet_id, dest_row, dest_col)
+    dependency = get_dependency(sheet_id, dest_row, dest_col)
     if dependency:
         remove_from_reverse_dependency(
             sheet_id, dest_row, dest_col, dependency.source_row, dependency.source_col
@@ -232,7 +234,7 @@ class CyclicDependents:
             return self.cyclic_path
         
         # get source depenency
-        source_dependancy = reverse_dependent(
+        source_dependancy = get_dependency(
             self.sheet_id, source_row, source_col
         )
         
