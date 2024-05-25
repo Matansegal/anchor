@@ -11,3 +11,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"sheet_id":1, "column_name
 
 # look up 
 curl -X POST -H "Content-Type: application/json" -d '{"sheet_id":1, "column_name":"B", "row_number":4, "value": "LOOKUP(B,1)"}' http://localhost:5000/sheet/setCell
+curl -X POST -H "Content-Type: application/json" -d '{"sheet_id":1, "column_name":"B", "row_number":5, "value": "LOOKUP(B,4)"}' http://localhost:5000/sheet/setCell
+curl -X POST -H "Content-Type: application/json" -d '{"sheet_id":1, "column_name":"B", "row_number":6, "value": "LOOKUP(B,5)"}' http://localhost:5000/sheet/setCell
+curl -X POST -H "Content-Type: application/json" -d '{"sheet_id":1, "column_name":"B", "row_number":7, "value": "LOOKUP(B,6)"}' http://localhost:5000/sheet/setCell
+curl -X POST -H "Content-Type: application/json" -d '{"sheet_id":1, "column_name":"B", "row_number":8, "value": "LOOKUP(B,1)"}' http://localhost:5000/sheet/setCell

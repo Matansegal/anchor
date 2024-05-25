@@ -4,7 +4,7 @@ from typing import Any
 from spreadsheets_app import DATABASE
 from spreadsheets_app.utils import strict_types
 
-def update_cell(table : Table, sheet_id : int, row_number : int, column_name : str, value : Any):
+def update_cell(table : Table, row_number : int, column_name : str, value : Any):
     row_number_exist_condition = table.c.row_number == row_number
     
     with DATABASE.engine.connect() as conn:
@@ -32,4 +32,4 @@ def update_cell(table : Table, sheet_id : int, row_number : int, column_name : s
             conn.execute(statement)
             conn.commit()
         except SQLAlchemyError as err:
-            raise SQLAlchemyError(f"could not insert row: {row} into sheet nunmber: {sheet_id}; {err}")
+            raise SQLAlchemyError(f"could not insert row: {row} into {table.name}; {err}")

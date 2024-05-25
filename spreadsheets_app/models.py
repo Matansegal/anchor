@@ -1,4 +1,5 @@
 from sqlalchemy import Table, Column, Integer, Boolean, Float, String, JSON
+from sqlalchemy.ext.mutable import MutableDict
 from spreadsheets_app import DATABASE
 
 
@@ -51,7 +52,7 @@ class ReverseDependent(DATABASE.Model):
     sheet_id = Column(Integer, primary_key=True)
     source_row = Column(Integer, primary_key=True)
     source_col = Column(String, primary_key=True)
-    dependents = Column(JSON) # structured as: {row : [cols]}
+    dependents = Column(MutableDict.as_mutable(JSON)) # structured as: {row : [cols]}
 
     def __init__(self, sheet_id : int, source_row : int, source_col : str, dependents : dict):
         self.sheet_id = sheet_id

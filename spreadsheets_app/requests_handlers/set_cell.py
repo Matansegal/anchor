@@ -1,6 +1,6 @@
 from flask import request
 from sqlalchemy.exc import SQLAlchemyError
-from spreadsheets_app.db_accessors.lookup import lookup, remove_dependency
+from spreadsheets_app.db_accessors.lookup import lookup, remove_dependency, backtracking
 from spreadsheets_app.db_accessors.cell import update_cell
 from spreadsheets_app.db_accessors.sheets import get_sheet
 
@@ -37,10 +37,11 @@ def set_cell():
     else:
         # check for remove dependency
         remove_dependency(sheet_id, row_number, column_name)
-        # TODO back track for update all dependents
         
     try:
-        update_cell(table, sheet_id, row_number, column_name, value)
+        update_cell(table, row_number, column_name, value)
+        # backtrack for update all dependents
+        backtracking(sheet=table,sheet_id=sheet_id,source_row=row_number,source_col=column_name,value=value)
         
     except (ValueError,SQLAlchemyError) as err:
         return f"{err}", 400
