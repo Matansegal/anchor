@@ -24,7 +24,7 @@
 | 8 | None | 1 | None | None |
 
 
-- we have the cyclic depenendent of: 
+- we have the cyclic dependents of: 
     - (B,7) -> (B,6) -> (B,5) -> (B,4) -> (B,1) 
     - (B,8) -> (B,1)
 
