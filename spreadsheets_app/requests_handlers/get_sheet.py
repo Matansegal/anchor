@@ -1,15 +1,18 @@
-from flask import jsonify
+from flask import jsonify, Response
+from typing import Tuple
 from sqlalchemy.exc import SQLAlchemyError
 from spreadsheets_app.db_accessors.sheets import get_sheet, select_all_from_sheet
 
 
-def get_sheet_by_id(sheet_id):
+def get_sheet_by_id(sheet_id) -> Tuple[Response, int]:
 
     # get the relevant table
     try:
         table = get_sheet(sheet_id)
     except SQLAlchemyError as err:
         return f"could not find sheet number {sheet_id}; {err}", 400
+    
+    breakpoint()
 
     sheet_data = select_all_from_sheet(table)
 

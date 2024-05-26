@@ -1,4 +1,5 @@
-from flask import request, jsonify
+from flask import request, jsonify, Response
+from typing import Tuple
 from sqlalchemy.exc import SQLAlchemyError
 from spreadsheets_app.db_accessors.sheets import (
     save_metadata,
@@ -7,7 +8,7 @@ from spreadsheets_app.db_accessors.sheets import (
 )
 
 
-def create_sheet():
+def create_sheet() -> Tuple[Response, int]:
     schema = request.get_json()
 
     if "columns" not in schema or not isinstance(schema["columns"], list):

@@ -1,11 +1,12 @@
 from flask import request
+from typing import Tuple
 from sqlalchemy.exc import SQLAlchemyError
 from spreadsheets_app.db_accessors.lookup import lookup, remove_dependency, backtracking
 from spreadsheets_app.db_accessors.cell import update_cell
 from spreadsheets_app.db_accessors.sheets import get_sheet
 
 
-def set_cell():
+def set_cell() -> Tuple[str, int]:
     schema = request.get_json()
     try:
         sheet_id = schema["sheet_id"]

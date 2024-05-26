@@ -17,7 +17,7 @@ def lookup(
     dest_row_number: int,
     dest_col: str,
     lookup_string: str,
-):
+) -> Any:
     match_pattern = re.match(LOOKUP_PATTERN, lookup_string)
     if not match_pattern:
         raise ValueError(
@@ -54,7 +54,7 @@ def lookup(
     return value
 
 
-def get_lookup_value(table: Table, source_row: int, source_col: str):
+def get_lookup_value(table: Table, source_row: int, source_col: str) -> Any:
     with DATABASE.engine.connect() as conn:
         # TODO handle if value do not exsits
         select_statement = select(table.c[source_col]).where(
@@ -122,7 +122,7 @@ def remove_dependency(sheet_id: int, dest_row: int, dest_col: str):
         DATABASE.session.commit()
 
 
-def get_reverse_dependency_row(sheet_id: int, source_row: int, source_col: str):
+def get_reverse_dependency_row(sheet_id: int, source_row: int, source_col: str) -> ReverseDependent:
     return (
         DATABASE.session.query(ReverseDependent)
         .filter(

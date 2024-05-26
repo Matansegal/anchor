@@ -1,5 +1,4 @@
-from typing import List
-from sqlalchemy.exc import SQLAlchemyError
+from typing import List, Any
 from sqlalchemy import Table, Column, Integer, Boolean, Float, String, select
 from spreadsheets_app import DATABASE, METADATA
 from spreadsheets_app.models import SheetsMetaData
@@ -26,7 +25,7 @@ def set_columns_list(schema_columns: List[dict]) -> List[Column]:
     return columns
 
 
-def get_column_type(column_type: str):
+def get_column_type(column_type: str) -> Any:
     try:
         return TYPE_MAPPING[column_type]
     except KeyError as err:
@@ -40,12 +39,12 @@ def save_metadata(columns: List[Column]) -> int:
     return sheet.id
 
 
-def get_sheet(sheet_id: int):
+def get_sheet(sheet_id: int) -> Table:
     table_name = f"sheet_{sheet_id}"
     return Table(table_name, METADATA, autoload_with=DATABASE.engine)
 
 
-def select_all_from_sheet(table: Table):
+def select_all_from_sheet(table: Table) -> List:
     with DATABASE.engine.connect() as conn:
         # get the whole sheet order by row number
         select_statement = select(table).order_by("row_number")
