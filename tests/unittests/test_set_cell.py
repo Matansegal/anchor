@@ -67,7 +67,7 @@ class TestSetCell(unittest.TestCase):
         # check again that the new cell updated
         result = get_cell_from_database(self.sheet_id, "col1", 1)
         self.assertEqual(result, "matan")
-        
+
         # insert another cell
         with APP.test_request_context(
             json={
@@ -93,7 +93,7 @@ class TestSetCell(unittest.TestCase):
                 "sheet_id": self.sheet_id,
                 "column_name": "col2",
                 "row_number": 1,
-                "value": "invalid_value",  # Should be an int
+                "value": "invalid_value",
             }
         ):
 
