@@ -9,7 +9,7 @@
 
 ### Requests
 
-- setting something up: `./requests/setting_up` -> this will create two tables, which sheet_1 looks like:
+- setting something up: `./requests/setting_up` -> this will create two sheets, `sheet_1` looks like:
 
 
 | row_number | A | B | C | D |
@@ -23,10 +23,11 @@
 | 7 | None | 1 | None | None |
 | 8 | None | 1 | None | None |
 
-
 - we have the cyclic dependents of: 
     - (B,7) -> (B,6) -> (B,5) -> (B,4) -> (B,1) 
     - (B,8) -> (B,1)
+
+- `sheet_2` has the same structure as `sheet_1` but it is empty
 
 You can use the following commands to play arround with it:
 
