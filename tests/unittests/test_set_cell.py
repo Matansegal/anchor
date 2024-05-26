@@ -1,6 +1,4 @@
 import unittest
-from sqlalchemy import select
-from spreadsheets_app import METADATA
 from spreadsheets_app.requests_handlers.create_sheet import create_sheet
 from spreadsheets_app.requests_handlers.set_cell import set_cell
 from tests import APP, DATABASE
@@ -20,6 +18,7 @@ class TestSetCell(unittest.TestCase):
                 "columns": [
                     {"name": "col1", "type": "string"},
                     {"name": "col2", "type": "int"},
+                    {"name": "col3", "type": "boolean"},
                 ]
             }
         ):
@@ -68,6 +67,24 @@ class TestSetCell(unittest.TestCase):
         # check again that the new cell updated
         result = get_cell_from_database(self.sheet_id, "col1", 1)
         self.assertEqual(result, "matan")
+        
+        # insert another cell
+        with APP.test_request_context(
+            json={
+                "sheet_id": self.sheet_id,
+                "column_name": "col3",
+                "row_number": 1,
+                "value": True,
+            }
+        ):
+
+            response, status_code = set_cell()
+            self.assertEqual(response, "")
+            self.assertEqual(status_code, 201)
+
+        # check again that the new cell updated
+        result = get_cell_from_database(self.sheet_id, "col3", 1)
+        self.assertEqual(result, True)
 
     def test_set_cell_invalid_type(self):
         # Mock invalid JSON schema for set_cell
