@@ -8,7 +8,7 @@ def test_get_sheet_endpoint_success(client):
         ]
     }
 
-    # Send a POST request to the createSheet endpoint
+    # create the sheet
     create_sheet_response = client.post(
         "/sheet/createSheet", json=reqiest_create_sheet, content_type="application/json"
     )
@@ -23,6 +23,7 @@ def test_get_sheet_endpoint_success(client):
         "value": 10,
     }
 
+    # add first cell
     response_set_cell1 = client.post(
         "/sheet/setCell", json=request_set_cell, content_type="application/json"
     )
@@ -36,12 +37,14 @@ def test_get_sheet_endpoint_success(client):
         "value": "matan",
     }
 
+    # add another cell
     response_set_cell2 = client.post(
         "/sheet/setCell", json=request_set_cell, content_type="application/json"
     )
 
     assert response_set_cell2.status_code == 201
 
+    # get the whole sheet
     response_get_sheet = client.get(
         f"/sheet/{sheet_id}", content_type="application/json"
     )
