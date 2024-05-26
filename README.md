@@ -7,6 +7,9 @@
 ### Run
 `docker run -p 5000:5000 spreadsheet-app`
 
+### Testing
+For running tests again: `docker run -it --rm spreadsheet-app pytest tests`
+
 ### Requests
 
 - setting something up: `./requests/setting_up` -> this will create two sheets, `sheet_1` looks like:
