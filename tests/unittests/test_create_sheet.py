@@ -4,7 +4,6 @@ from tests import APP, DATABASE
 from tests.utils import tear_down_database
 
 
-
 class TestCreateSheet(unittest.TestCase):
     def setUp(self):
         # Create all tables in the test database

@@ -11,7 +11,7 @@ class TestGetSheet(unittest.TestCase):
         # set up the database
         with APP.app_context():
             DATABASE.create_all()
-            
+
         # create a sheet
         with APP.test_request_context(
             json={
@@ -29,7 +29,9 @@ class TestGetSheet(unittest.TestCase):
         # add two cells in two different rows
         response, status_code = send_test_set_cell_request(self.sheet_id, "col2", 1, 10)
         self.assertEqual(status_code, 201)
-        response, status_code = send_test_set_cell_request(self.sheet_id, "col1", 2, "matan")
+        response, status_code = send_test_set_cell_request(
+            self.sheet_id, "col1", 2, "matan"
+        )
         self.assertEqual(status_code, 201)
 
     def tearDown(self):

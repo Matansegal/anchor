@@ -122,7 +122,9 @@ def remove_dependency(sheet_id: int, dest_row: int, dest_col: str):
         DATABASE.session.commit()
 
 
-def get_reverse_dependency_row(sheet_id: int, source_row: int, source_col: str) -> ReverseDependent:
+def get_reverse_dependency_row(
+    sheet_id: int, source_row: int, source_col: str
+) -> ReverseDependent:
     return (
         DATABASE.session.query(ReverseDependent)
         .filter(
