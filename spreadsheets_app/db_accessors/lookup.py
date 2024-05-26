@@ -21,7 +21,7 @@ def lookup(
     match_pattern = re.match(LOOKUP_PATTERN, lookup_string)
     if not match_pattern:
         raise ValueError(
-            "string start with 'LOOKUP' but does not match the pattern 'LOOKUP(col,value)'."
+            "string starts with 'LOOKUP' but does not match the pattern 'LOOKUP(col,value)'."
         )
     source_col = match_pattern.group(1).strip()
     row_number_str = match_pattern.group(2).strip()

@@ -1,7 +1,8 @@
 import unittest
-from spreadsheets_app import METADATA
 from spreadsheets_app.requests_handlers.create_sheet import create_sheet
 from tests import APP, DATABASE
+from tests.utils import tear_down_database
+
 
 
 class TestCreateSheet(unittest.TestCase):
@@ -11,13 +12,7 @@ class TestCreateSheet(unittest.TestCase):
             DATABASE.create_all()
 
     def tearDown(self):
-        with APP.app_context():
-            DATABASE.session.remove()
-            # drop table which created with a model
-            DATABASE.drop_all()
-            # drop all table which createad manualy
-            METADATA.drop_all(DATABASE.engine)
-            METADATA.clear()
+        tear_down_database()
 
     def test_create_sheet_success(self):
         with APP.test_request_context(

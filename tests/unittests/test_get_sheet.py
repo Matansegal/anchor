@@ -1,9 +1,7 @@
 import unittest
-from sqlalchemy import select
-from spreadsheets_app import METADATA
 from spreadsheets_app.requests_handlers.create_sheet import create_sheet
-from spreadsheets_app.requests_handlers.set_cell import set_cell
 from spreadsheets_app.requests_handlers.get_sheet import get_sheet_by_id
+from tests.utils import send_test_set_cell_request, tear_down_database
 from tests import APP, DATABASE
 
 
@@ -13,53 +11,29 @@ class TestGetSheet(unittest.TestCase):
         # set up the database
         with APP.app_context():
             DATABASE.create_all()
-            # create a sheet
-            with APP.test_request_context(
-                json={
-                    "columns": [
-                        {"name": "col1", "type": "string"},
-                        {"name": "col2", "type": "int"},
-                    ]
-                }
-            ):
+            
+        # create a sheet
+        with APP.test_request_context(
+            json={
+                "columns": [
+                    {"name": "col1", "type": "string"},
+                    {"name": "col2", "type": "int"},
+                ]
+            }
+        ):
 
-                response, status_code = create_sheet()
-                self.assertEqual(status_code, 201)
-                self.sheet_id = response.json["sheetId"]
+            response, status_code = create_sheet()
+            self.assertEqual(status_code, 201)
+            self.sheet_id = response.json["sheetId"]
 
-            # add two cells in two different rows
-            with APP.test_request_context(
-                json={
-                    "sheet_id": self.sheet_id,
-                    "column_name": "col2",
-                    "row_number": 1,
-                    "value": 10,
-                }
-            ):
-
-                response, status_code = set_cell()
-                self.assertEqual(status_code, 201)
-
-            with APP.test_request_context(
-                json={
-                    "sheet_id": self.sheet_id,
-                    "column_name": "col1",
-                    "row_number": 2,
-                    "value": "matan",
-                }
-            ):
-
-                response, status_code = set_cell()
-                self.assertEqual(status_code, 201)
+        # add two cells in two different rows
+        response, status_code = send_test_set_cell_request(self.sheet_id, "col2", 1, 10)
+        self.assertEqual(status_code, 201)
+        response, status_code = send_test_set_cell_request(self.sheet_id, "col1", 2, "matan")
+        self.assertEqual(status_code, 201)
 
     def tearDown(self):
-        with APP.app_context():
-            DATABASE.session.remove()
-            # drop table which created with a model
-            DATABASE.drop_all()
-            # drop all table which createad manualy
-            METADATA.drop_all(DATABASE.engine)
-            METADATA.clear()
+        tear_down_database()
 
     def test_get_sheet_valid(self):
 

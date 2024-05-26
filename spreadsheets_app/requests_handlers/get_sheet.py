@@ -11,8 +11,6 @@ def get_sheet_by_id(sheet_id) -> Tuple[Response, int]:
         table = get_sheet(sheet_id)
     except SQLAlchemyError as err:
         return f"could not find sheet number {sheet_id}; {err}", 400
-    
-    breakpoint()
 
     sheet_data = select_all_from_sheet(table)
 
