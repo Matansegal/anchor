@@ -26,7 +26,7 @@ For running tests again: `docker run -it --rm spreadsheet-app pytest tests`
 | 7 | None | 1 | None | None |
 | 8 | None | 1 | None | None |
 
-- we have the cyclic dependents of: 
+- we have the following dependents: 
     - (B,7) -> (B,6) -> (B,5) -> (B,4) -> (B,1) 
     - (B,8) -> (B,1)
 
