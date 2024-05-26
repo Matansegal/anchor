@@ -10,8 +10,10 @@
 ### Requests
 
 - setting something up: `./requests/setting_up` -> this will create two tables, which sheet_1 looks like:
+
+
 | row_number | A | B | C | D |
-| --- | --- | --- | --- | --- |
+| :---: | :---: | :---: | :---: | :---: |
 | 1 | None | 1 | None | None |
 | 2 | None | 2 | None | None |
 | 3 | None | 3 | None | None |
@@ -20,6 +22,7 @@
 | 6 | None | 1 | None | None |
 | 7 | None | 1 | None | None |
 | 8 | None | 1 | None | None |
+
 
 - we have the cyclic depenendent of: 
     - (B,7) -> (B,6) -> (B,5) -> (B,4) -> (B,1) 
